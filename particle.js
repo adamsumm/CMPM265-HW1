@@ -10,7 +10,8 @@ class Particle{
         this.life = 5;
         this.lifetime = this.life;
         this.game = game;
-        this.sprite = game.add.sprite(xx, yy, 'apple');
+        this.sprite = game.add.sprite(xx, yy, 'spark');
+        this.sprite.visible = false;
     }
     update(dt){
         this.vx += this.ax*dt;
@@ -20,6 +21,8 @@ class Particle{
         this.sprite.x = this.xx;
         this.sprite.y = this.yy;
         this.lifetime -= dt;
+        this.sprite.alpha *= 0.99;
+        this.sprite.rotation = 2*Math.PI-Math.atan2(this.vx,this.vy);
     }
     render(){
       //  this.game.context.fillStyle = 'rgb(255,255,255)';
@@ -34,7 +37,7 @@ class Attractor{
     }
 }
 class ParticleEmitter{
-    constructor(xx,yy,rate,anglemin,anglemax,minvel,maxvel,minlife,maxlife,initialAmount,game){
+    constructor(xx,yy,rate,anglemin,anglemax,minvel,maxvel,minlife,maxlife,initialAmount,game,color){
         this.xx = xx;
         this.yy = yy;
         this.rate = rate;
@@ -49,6 +52,7 @@ class ParticleEmitter{
         this.minvel = minvel;
         this.minlife = minlife;
         this.maxlife = maxlife;
+        this.color = color;
         for (var ii = 0; ii < initialAmount; ii++){
             this.pooledParticles.push(new Particle(0,0,0,0,game));
         }
@@ -74,6 +78,8 @@ class ParticleEmitter{
             particle.vy = Math.sin(angle)*speed;
             particle.lifetime = life;
             particle.sprite.visible = true;
+            particle.sprite.tint = this.color;
+            particle.sprite.alpha = 1.0;
             this.activeParticles.push(particle);
         }
         for (var ii = 0; ii < this.activeParticles.length; ii++){
